@@ -1,7 +1,6 @@
 package com.kss.learn.weatherservice.controller;
 
 import com.kss.learn.weatherservice.entity.Weather;
-import com.kss.learn.weatherservice.repository.WeatherRepo;
 import com.kss.learn.weatherservice.service.CacheInspectionService;
 import com.kss.learn.weatherservice.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,35 +16,38 @@ public class WeatherController {
     private WeatherService weatherService;
 
     @Autowired
-    private WeatherRepo weatherRepo;
-
-    @Autowired
     private CacheInspectionService cacheInspectionService;
 
     @GetMapping("/getWeatherByCity")
-    public String getWeatherByCity(@RequestParam String city) {
-        String weather = weatherService.getWeatherByCity(city);
-        return weather;
+    public Weather getWeatherByCity(@RequestParam String city) {
+        return weatherService.getWeatherByCity(city);
     }
 
     @GetMapping("/getAllWeather")
     public List<Weather> getAllWeather() {
-        return weatherRepo.findAll();
+        return weatherService.getAllWeather();
     }
 
     @PostMapping("/saveWeather")
     public Weather saveWeather(@RequestBody Weather weather) {
-        return weatherRepo.save(weather);
+        return weatherService.saveWeather(weather);
     }
 
+    /*
+     * We can inspect either cache without duplicating this endpoint:
+     *      GET /weather/getCacheData?cacheName=weather
+     *      GET /weather/getCacheData?cacheName=weatherList
+     *
+     * Defaults to "weather" if the param is omitted, to match prior behavior.
+     */
     @GetMapping("/getCacheData")
-    public void getCacheData() {
-        cacheInspectionService.printCacheContents("weather");
+    public void getCacheData(@RequestParam(defaultValue = "weather") String cacheName) {
+        cacheInspectionService.printCacheContents(cacheName);
     }
 
     @PutMapping("/editWeatherByCity/{city}")
-    public String editWeatherByCity(@PathVariable String city, @RequestParam String editedWeather) {
-        return weatherService.editWeatherByCity(city, editedWeather);
+    public Weather editWeatherByCity(@PathVariable String city, @RequestParam String editWeather) {
+        return weatherService.editWeatherByCity(city, editWeather);
     }
 
     @DeleteMapping("/deleteWeatherByCity/{city}")
