@@ -26,7 +26,7 @@ public class WeatherService {
         return weatherRepo.findByCity(city).orElseThrow(() -> new RuntimeException("Weather Data not Available"));
     }
 
-    /**
+    /*
      * In this method, For @Cacheable you just cache the single return value under a key; since
      * this method takes no arguments, no key is needed — Spring uses a
      * fixed default key (SimpleKey.EMPTY) for zero-arg methods.
@@ -42,7 +42,7 @@ public class WeatherService {
         return weatherRepo.findAll();
     }
 
-    /**
+    /*
      * NOTE: If we call weatherRepo.save() directly,
      * bypassing the cache entirely. That meant if "city" had already been
      * cached (even as "Weather Data not Available" from an earlier miss),
@@ -56,9 +56,9 @@ public class WeatherService {
      */
     //@CacheEvict(value = "weather", key = "#weather.city")
 
-    /**
+    /*
      * Also evicts "weatherList" so getAllWeather() reflects the new city on
-     *      * its next call.
+     * its next call.
      */
     @Caching(evict = {
             @CacheEvict(value = "weather", key = "#weather.city"),
@@ -69,13 +69,13 @@ public class WeatherService {
         return weatherRepo.save(weather);
     }
 
-    /**
+    /*
      * @CachePut is safe here because getWeatherByCity() and this cache both
      * consistently store/expect a Weather object — no type mismatch.
      */
     //@CachePut(value = "weather", key = "#city")
 
-    /**
+    /*
      * Also evicts "weatherList" so getAllWeather() reflects the edited
      * forecast on its next call rather than serving a stale cached list.
      */

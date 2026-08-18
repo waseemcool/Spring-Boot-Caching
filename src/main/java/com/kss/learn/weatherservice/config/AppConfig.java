@@ -18,7 +18,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
+/*
  * Central cache configuration.
  *
  * Why a custom RedisCacheManager instead of relying purely on
@@ -75,7 +75,7 @@ public class AppConfig {
                 .build();
     }
 
-    /**
+    /*
      * Explicit RedisTemplate<String, Object> bean.
      *
      * Spring Boot DOES auto-configure a RedisTemplate bean out of the box,

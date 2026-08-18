@@ -26,7 +26,7 @@ public class CacheInspectionService {
 //        }
 //    }
 
-    /**
+    /*
      * NOTE: With Redis as the cache provider, Cache.getNativeCache() on a
      * RedisCache returns the RedisCache wrapper itself (there is no in-JVM
      * native map to print) — its toString() does NOT show cache contents.
