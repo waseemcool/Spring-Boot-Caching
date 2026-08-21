@@ -18,23 +18,26 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-/*
- * Central cache configuration.
- *
- * Why a custom RedisCacheManager instead of relying purely on
- * application.properties defaults:
- *   1. We want JSON serialization (GenericJackson2JsonRedisSerializer) instead
- *      of the default JdkSerializationRedisSerializer, so cached values are
- *      human-readable in Redis and don't require entities to implement
- *      Serializable.
- *   2. We want an explicit, sane default TTL so entries don't live forever.
- *   3. We want the ability to give individual caches (e.g. "weather", "weatherList")
- *      different TTLs later without touching this class again.
- */
+// Central Cache Configuration
 @Configuration
 @EnableCaching
 public class AppConfig {
 
+    /*
+     * Builds and configures the RedisCacheManager that backs every
+     * @Cacheable / @CachePut / @CacheEvict method in the app (e.g. in
+     * WeatherService). This bean is what Spring's caching proxy actually
+     * calls behind the scenes whenever one of those annotations fires.
+     *
+     * Configures:
+     *   - JSON serialization for cached values (GenericJacksonJsonRedisSerializer)
+     *     instead of Java's default binary serialization, so entries are
+     *     human-readable in Redis and entities don't need to implement Serializable.
+     *   - Plain-text (StringRedisSerializer) keys, so keys are readable
+     *     with redis-cli and match what CacheInspectionService expects.
+     *   - A default TTL of 10 minutes so cache entries don't live forever.
+     *   - Per-cache TTL overrides for "weather" (10 min) and "weatherList" (2 min).
+     */
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
 
