@@ -86,9 +86,8 @@ public class AppConfig {
      * Because Spring's autowiring is generics-aware, that auto-configured
      * bean does NOT satisfy an injection point asking for
      * RedisTemplate<String, Object> — that mismatch is what originally caused:
-     *
-     *   "Parameter 0 of constructor in CacheInspectionService required a
-     *    bean of type 'RedisTemplate' that could not be found"
+     *      "Parameter 0 of constructor in CacheInspectionService required a
+     *      bean of type 'RedisTemplate' that could not be found"
      *
      * Defining this bean ourselves, with the exact generic type injected in
      * CacheInspectionService, fixes that. We also explicitly set
