@@ -34,12 +34,12 @@ public class WeatherController {
     }
 
     /*
-     * We can inspect either cache without duplicating this endpoint:
-     *      GET /weather/getCacheData?cacheName=weather
-     *      GET /weather/getCacheData?cacheName=weatherList
-     *
-     * Defaults to "weather" if the param is omitted, to match prior behavior.
-     */
+    * We can inspect either cache without duplicating this endpoint:
+    *      GET /weather/getCacheData?cacheName=weather
+    *      GET /weather/getCacheData?cacheName=weatherList
+    *
+    * Defaults to "weather" if the param is omitted, to match prior behavior.
+    * */
     @GetMapping("/getCacheData")
     public void getCacheData(@RequestParam(defaultValue = "weather") String cacheName) {
         cacheInspectionService.printCacheContents(cacheName);

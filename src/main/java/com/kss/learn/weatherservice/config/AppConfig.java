@@ -24,20 +24,20 @@ import java.util.Map;
 public class AppConfig {
 
     /*
-     * Builds and configures the RedisCacheManager that backs every
-     * @Cacheable / @CachePut / @CacheEvict method in the app (e.g. in
-     * WeatherService). This bean is what Spring's caching proxy actually
-     * calls behind the scenes whenever one of those annotations fires.
-     *
-     * Configures:
-     *   - JSON serialization for cached values (GenericJacksonJsonRedisSerializer)
-     *     instead of Java's default binary serialization, so entries are
-     *     human-readable in Redis and entities don't need to implement Serializable.
-     *   - Plain-text (StringRedisSerializer) keys, so keys are readable
-     *     with redis-cli and match what CacheInspectionService expects.
-     *   - A default TTL of 10 minutes so cache entries don't live forever.
-     *   - Per-cache TTL overrides for "weather" (10 min) and "weatherList" (2 min).
-     */
+    * Builds and configures the RedisCacheManager that backs every
+    * @Cacheable / @CachePut / @CacheEvict method in the app (e.g. in
+    * WeatherService). This bean is what Spring's caching proxy actually
+    * calls behind the scenes whenever one of those annotations fires.
+    *
+    * Configures:
+    *   - JSON serialization for cached values (GenericJacksonJsonRedisSerializer)
+    *     instead of Java's default binary serialization, so entries are
+    *     human-readable in Redis and entities don't need to implement Serializable.
+    *   - Plain-text (StringRedisSerializer) keys, so keys are readable
+    *     with redis-cli and match what CacheInspectionService expects.
+    *   - A default TTL of 10 minutes so cache entries don't live forever.
+    *   - Per-cache TTL overrides for "weather" (10 min) and "weatherList" (2 min).
+    * */
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
 
@@ -70,7 +70,7 @@ public class AppConfig {
         // made outside the app.
         Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();
         cacheConfigs.put("weather", defaultConfig.entryTtl(Duration.ofMinutes(10)));
-        cacheConfigs.put("weatherList", defaultConfig.entryTtl(Duration.ofMinutes(3)));
+        cacheConfigs.put("weatherList", defaultConfig.entryTtl(Duration.ofMinutes(5)));
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(defaultConfig)
@@ -79,25 +79,25 @@ public class AppConfig {
     }
 
     /*
-     * Explicit RedisTemplate<String, Object> bean.
-     *
-     * Spring Boot DOES auto-configure a RedisTemplate bean out of the box,
-     * but it's typed RedisTemplate<Object, Object> (bean name "redisTemplate").
-     * Because Spring's autowiring is generics-aware, that auto-configured
-     * bean does NOT satisfy an injection point asking for
-     * RedisTemplate<String, Object> — that mismatch is what originally caused:
-     *      "Parameter 0 of constructor in CacheInspectionService required a
-     *      bean of type 'RedisTemplate' that could not be found"
-     *
-     * Defining this bean ourselves, with the exact generic type injected in
-     * CacheInspectionService, fixes that. We also explicitly set
-     * StringRedisSerializer for keys — matching exactly what RedisCacheManager
-     * uses above — otherwise keys() pattern matching silently returns nothing
-     * (the auto-configured template defaults to JdkSerializationRedisSerializer
-     * for keys, which can't match the plain-text keys RedisCacheManager writes).
-     * Values use the same JSON serializer as RedisCacheManager so reads here
-     * deserialize consistently with what caching actually wrote.
-     */
+    * Explicit RedisTemplate<String, Object> bean.
+    *
+    * Spring Boot DOES auto-configure a RedisTemplate bean out of the box,
+    * but it's typed RedisTemplate<Object, Object> (bean name "redisTemplate").
+    * Because Spring's autowiring is generics-aware, that auto-configured
+    * bean does NOT satisfy an injection point asking for
+    * RedisTemplate<String, Object> — that mismatch is what originally caused:
+    *      "Parameter 0 of constructor in CacheInspectionService required a
+    *      bean of type 'RedisTemplate' that could not be found"
+    *
+    * Defining this bean ourselves, with the exact generic type injected in
+    * CacheInspectionService, fixes that. We also explicitly set
+    * StringRedisSerializer for keys — matching exactly what RedisCacheManager
+    * uses above — otherwise keys() pattern matching silently returns nothing
+    * (the auto-configured template defaults to JdkSerializationRedisSerializer
+    * for keys, which can't match the plain-text keys RedisCacheManager writes).
+    * Values use the same JSON serializer as RedisCacheManager so reads here
+    * deserialize consistently with what caching actually wrote.
+    * */
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();

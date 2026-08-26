@@ -27,19 +27,19 @@ public class CacheInspectionService {
 //    }
 
     /*
-     * NOTE: With Redis as the cache provider, Cache.getNativeCache() on a
-     * RedisCache returns the RedisCache wrapper itself (there is no in-JVM
-     * native map to print) — its toString() does NOT show cache contents.
-     * That approach only worked with the default ConcurrentMapCache, whose
-     * native cache IS the backing ConcurrentHashMap.
-     *
-     * For Redis, we inspect entries directly through a RedisTemplate instead,
-     * RedisTemplate<String, Object> bean explicitly defined in AppConfig.
-     * (Spring Boot's auto-configured RedisTemplate is typed <Object, Object>
-     * AND defaults to JdkSerializationRedisSerializer for keys, which won't
-     * match the plain-text keys RedisCacheManager writes — hence the
-     * dedicated, correctly-serialized bean in AppConfig.)
-     */
+    * NOTE: With Redis as the cache provider, Cache.getNativeCache() on a
+    * RedisCache returns the RedisCache wrapper itself (there is no in-JVM
+    * native map to print) — its toString() does NOT show cache contents.
+    * That approach only worked with the default ConcurrentMapCache, whose
+    * native cache IS the backing ConcurrentHashMap.
+    *
+    * For Redis, we inspect entries directly through a RedisTemplate instead,
+    * RedisTemplate<String, Object> bean explicitly defined in AppConfig.
+    * (Spring Boot's auto-configured RedisTemplate is typed <Object, Object>
+    * AND defaults to JdkSerializationRedisSerializer for keys, which won't
+    * match the plain-text keys RedisCacheManager writes — hence the
+    * dedicated, correctly-serialized bean in AppConfig.)
+    * */
     private final RedisTemplate<String, Object> redisTemplate;
 
     public CacheInspectionService(RedisTemplate<String, Object> redisTemplate) {
